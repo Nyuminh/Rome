@@ -18,7 +18,7 @@ MonoBehaviour:
   damage: 15
   knockbackForce: 5
   hitboxRadius: 0.35
-  hitboxOffset: {x: 0, y: 0, z: 0}
+  hitboxOffset: {x: 0, y: 0, z: 1.5}
   hitStopDuration: 0.06
   hitStopTimeScale: 0
   cameraShakeIntensity: 0.3

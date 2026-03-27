@@ -506,15 +506,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 89d8abcb4f22f2e4f9e1bbaf1942761a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.04
+      value: 0.27
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 89d8abcb4f22f2e4f9e1bbaf1942761a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.14
+      value: 0.6
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 89d8abcb4f22f2e4f9e1bbaf1942761a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 0.06
+      value: 1.41
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 89d8abcb4f22f2e4f9e1bbaf1942761a, type: 3}
       propertyPath: m_LocalRotation.w
@@ -562,33 +562,67 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8519525099234752857, guid: 89d8abcb4f22f2e4f9e1bbaf1942761a, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 1.08
+      value: 1.0760442
       objectReference: {fileID: 0}
     - target: {fileID: 8519525099234752857, guid: 89d8abcb4f22f2e4f9e1bbaf1942761a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.15
+      value: 1.270607
       objectReference: {fileID: 0}
     - target: {fileID: 8519525099234752857, guid: 89d8abcb4f22f2e4f9e1bbaf1942761a, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -1.731
+      value: -1.7793314
+      objectReference: {fileID: 0}
+    - target: {fileID: 8519525099234752857, guid: 89d8abcb4f22f2e4f9e1bbaf1942761a, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: -0.49999994
+      objectReference: {fileID: 0}
+    - target: {fileID: 8519525099234752857, guid: 89d8abcb4f22f2e4f9e1bbaf1942761a, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: 8519525099234752857, guid: 89d8abcb4f22f2e4f9e1bbaf1942761a, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: -1115412986583533848, guid: 89d8abcb4f22f2e4f9e1bbaf1942761a, type: 3}
     m_AddedGameObjects: []
     m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 89d8abcb4f22f2e4f9e1bbaf1942761a, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1922050659975780655}
     - targetCorrespondingSourceObject: {fileID: 5024387983735825283, guid: 89d8abcb4f22f2e4f9e1bbaf1942761a, type: 3}
       insertIndex: -1
       addedObject: {fileID: 2297733146820580534}
-    - targetCorrespondingSourceObject: {fileID: 5024387983735825283, guid: 89d8abcb4f22f2e4f9e1bbaf1942761a, type: 3}
-      insertIndex: -1
-      addedObject: {fileID: 9143785108872773527}
   m_SourcePrefab: {fileID: 100100000, guid: 89d8abcb4f22f2e4f9e1bbaf1942761a, type: 3}
 --- !u!4 &430472545731689586 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 89d8abcb4f22f2e4f9e1bbaf1942761a, type: 3}
   m_PrefabInstance: {fileID: 176732211710024601}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1059059304341268168 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 919132149155446097, guid: 89d8abcb4f22f2e4f9e1bbaf1942761a, type: 3}
+  m_PrefabInstance: {fileID: 176732211710024601}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &1922050659975780655
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1059059304341268168}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc87826aadf42334691a428c98a21244, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Blocks.Gameplay.Core::Blocks.Gameplay.Core.Combat.Hitbox
+  hurtboxLayer:
+    serializedVersion: 2
+    m_Bits: 0
+  defaultRadius: 0.4
+  owner: {fileID: 0}
 --- !u!1 &5172902328214812698 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5024387983735825283, guid: 89d8abcb4f22f2e4f9e1bbaf1942761a, type: 3}
@@ -615,23 +649,6 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.0318123, y: 0.0014223718, z: 0.001425296}
   m_Center: {x: 0.00035788224, y: -0.017267361, z: 0.01080702}
---- !u!114 &9143785108872773527
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5172902328214812698}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: bc87826aadf42334691a428c98a21244, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Blocks.Gameplay.Core::Blocks.Gameplay.Core.Combat.Hitbox
-  hurtboxLayer:
-    serializedVersion: 2
-    m_Bits: 512
-  defaultRadius: 0.35
-  owner: {fileID: 8195293402151718667}
 --- !u!1001 &6226162457048493512
 PrefabInstance:
   m_ObjectHideFlags: 0
