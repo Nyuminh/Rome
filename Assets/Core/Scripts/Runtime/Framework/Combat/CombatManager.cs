@@ -69,6 +69,9 @@ namespace Blocks.Gameplay.Core.Combat
 
             if (!IsAttacking) return;
 
+            // KHÔNG đếm frame nếu đang bị khựng (HitStop) để tránh lệch với Animator
+            if (HitStopManager.Instance != null && HitStopManager.Instance.IsInHitStop) return;
+
             m_FrameAccumulator += Time.deltaTime;
             while (m_FrameAccumulator >= FRAME_DURATION)
             {

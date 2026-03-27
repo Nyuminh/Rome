@@ -12,8 +12,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a10f4161b24807745bd796f11154db6b, type: 3}
   m_Name: Hook
   m_EditorClassIdentifier: Blocks.Gameplay.Core::Blocks.Gameplay.Core.Combat.AttackData
-  startupFrames: 8
-  activeFrames: 5
+  startupFrames: 34
+  activeFrames: 40
   recoveryFrames: 15
   damage: 40
   knockbackForce: 10

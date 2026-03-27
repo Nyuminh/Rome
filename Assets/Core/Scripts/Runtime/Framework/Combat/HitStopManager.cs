@@ -115,6 +115,8 @@ namespace Blocks.Gameplay.Core.Combat
         /// </summary>
         private IEnumerator AnimatorHitStopRoutine(Animator attacker, Animator victim, float duration)
         {
+            m_IsInHitStop = true;
+            
             // Dừng Animator
             float originalAttackerSpeed = 1f;
             float originalVictimSpeed = 1f;
@@ -135,6 +137,8 @@ namespace Blocks.Gameplay.Core.Combat
             // Khôi phục Animator
             if (attacker != null) attacker.speed = originalAttackerSpeed;
             if (victim != null) victim.speed = originalVictimSpeed;
+            
+            m_IsInHitStop = false;
         }
 
         private void RestoreTimeScale()
