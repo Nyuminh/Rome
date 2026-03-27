@@ -6,6 +6,7 @@ TagManager:
   tags:
   - CinemachineTarget
   - Weapon
+  - gay
   layers:
   - Default
   - TransparentFX
@@ -16,8 +17,8 @@ TagManager:
   - PlayerHitBox
   - Projectile
   - Enemy
-  - 
-  - 
+  - Hurtbox
+  - Pushbox
   - 
   - 
   - 

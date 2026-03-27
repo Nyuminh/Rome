@@ -1,0 +1,28 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a10f4161b24807745bd796f11154db6b, type: 3}
+  m_Name: Cross
+  m_EditorClassIdentifier: Blocks.Gameplay.Core::Blocks.Gameplay.Core.Combat.AttackData
+  startupFrames: 5
+  activeFrames: 4
+  recoveryFrames: 12
+  damage: 20
+  knockbackForce: 5
+  hitboxRadius: 0.4
+  hitboxOffset: {x: 0, y: 0, z: 0}
+  hitStopDuration: 0.08
+  hitStopTimeScale: 0
+  cameraShakeIntensity: 0.3
+  cameraShakeDuration: 0.15
+  animationTrigger: IsAttack
+  comboParameter: ComboCount
+  comboIndex: 2
