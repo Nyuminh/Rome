@@ -4,62 +4,40 @@ using System.Collections.Generic;
 namespace Blocks.Gameplay.Core.Combat
 {
     /// <summary>
-    /// Hitbox - Vùng gây sát thương (Code-Driven Collision).
-    /// Gắn vào bone tay/chân/vũ khí của nhân vật.
-    /// 
-    /// KHÔNG dựa vào Physics Engine tự phát hiện va chạm.
-    /// Thay vào đó, khi được kích hoạt bởi CombatManager, script này sẽ gọi
-    /// Physics.OverlapSphere tại vị trí hiện tại để quét Hurtbox của đối phương.
-    /// 
-    /// Chỉ bật trong giai đoạn Active Frames của đòn đánh.
-    /// Khi trúng 1 Hurtbox → ghi nhận hit, rồi tắt ngay để tránh multi-hit.
+    /// Smart Hitbox - Tự động bám theo Box Collider của vũ khí.
+    /// Giải quyết vấn đề "đánh hụt" bằng cách quét đúng hình dáng thực tế của Polearm.
     /// </summary>
     public class Hitbox : MonoBehaviour
     {
         [Header("=== Hitbox Config ===")]
-        [Tooltip("Layer chứa Hurtbox đối phương.")]
         [SerializeField] private LayerMask hurtboxLayer;
-
-        [Tooltip("Bán kính quét mặc định (có thể bị override bởi AttackData).")]
-        [SerializeField] private float defaultRadius = 0.3f;
-
-        [Tooltip("Tham chiếu đến owner (nhân vật sở hữu Hitbox này). Tự tìm nếu để trống.")]
         [SerializeField] private GameObject owner;
 
-        /// <summary>Hitbox đang bật hay tắt. Chỉ quét khi IsActive = true.</summary>
-        public bool IsActive { get; private set; } = false;
+        [Header("=== Box Settings ===")]
+        [Tooltip("Kéo BoxCollider của lưỡi thương vào đây.")]
+        [SerializeField] private BoxCollider weaponCollider;
 
-        // Danh sách các owner đã bị trúng trong đòn đánh hiện tại
-        // → Tránh 1 cú đấm tính thành 2-3 hit trên cùng 1 đối thủ
-        private readonly HashSet<GameObject> m_AlreadyHitOwners = new HashSet<GameObject>();
-
-        // Dữ liệu đòn đánh hiện tại
         private AttackData m_CurrentAttack;
-        private float m_CurrentRadius;
+        private readonly HashSet<GameObject> m_AlreadyHitOwners = new HashSet<GameObject>();
+        public bool IsActive { get; private set; } = false;
 
         private void Awake()
         {
-            if (owner == null)
-            {
-                owner = transform.root.gameObject;
-            }
+            if (owner == null) owner = transform.root.gameObject;
+            // Nếu chưa gán thì tự tìm BoxCollider trên cùng object
+            if (weaponCollider == null) weaponCollider = GetComponent<BoxCollider>();
+            
+            // Đảm bảo Collider gốc không chặn vật lý làm nhân vật bị bay
+            if (weaponCollider != null) weaponCollider.isTrigger = true;
         }
 
-        /// <summary>
-        /// Kích hoạt Hitbox cho đòn đánh hiện tại. Gọi bởi CombatManager khi frame đến giai đoạn Active.
-        /// </summary>
-        /// <param name="attackData">Frame data của đòn đánh.</param>
         public void Activate(AttackData attackData)
         {
             IsActive = true;
             m_CurrentAttack = attackData;
-            m_CurrentRadius = attackData != null ? attackData.hitboxRadius : defaultRadius;
             m_AlreadyHitOwners.Clear();
         }
 
-        /// <summary>
-        /// Tắt Hitbox. Gọi khi hết Active Frames hoặc khi đòn đánh kết thúc.
-        /// </summary>
         public void Deactivate()
         {
             IsActive = false;
@@ -67,45 +45,39 @@ namespace Blocks.Gameplay.Core.Combat
             m_AlreadyHitOwners.Clear();
         }
 
-        /// <summary>
-        /// Quét va chạm tại vị trí hiện tại bằng Physics.OverlapSphere (Code-Driven).
-        /// Trả về danh sách HitResult chứa thông tin hit.
-        /// Gọi mỗi frame trong giai đoạn Active bởi CombatManager.
-        /// </summary>
-        /// <returns>Danh sách kết quả hit (có thể rỗng nếu không trúng ai).</returns>
         public List<HitResult> PerformScan()
         {
             var results = new List<HitResult>();
+            if (!IsActive || weaponCollider == null) return results;
 
-            if (!IsActive || m_CurrentAttack == null) return results;
+            // === Lấy thông số hình hộp trong không gian thế giới (World Space) ===
+            // 1. Tâm của Box
+            Vector3 worldCenter = weaponCollider.transform.TransformPoint(weaponCollider.center);
+            
+            // 2. Kích thước (Half Extents) - tính cả Scale của nhân vật
+            Vector3 worldHalfExtents = Vector3.Scale(weaponCollider.size, weaponCollider.transform.lossyScale) * 0.5f;
+            
+            // 3. Hướng xoay của vũ khí
+            Quaternion worldRotation = weaponCollider.transform.rotation;
 
-            // Tính vị trí quét = vị trí bone + offset (local space → world space)
-            Vector3 scanCenter = transform.position + transform.TransformDirection(m_CurrentAttack.hitboxOffset);
-
-            // === Code-Driven Collision: OverlapSphere ===
-            Collider[] hits = Physics.OverlapSphere(scanCenter, m_CurrentRadius, hurtboxLayer);
+            // === Quét hình hộp (OverlapBox) ===
+            Collider[] hits = Physics.OverlapBox(worldCenter, worldHalfExtents, worldRotation, hurtboxLayer);
 
             foreach (var col in hits)
             {
                 var hurtbox = col.GetComponent<Hurtbox>();
                 if (hurtbox == null || !hurtbox.IsActive) continue;
-
-                // Không tự đánh mình
                 if (hurtbox.Owner == owner) continue;
-
-                // Đã trúng owner này trong đòn đánh hiện tại → bỏ qua (anti multi-hit)
                 if (m_AlreadyHitOwners.Contains(hurtbox.Owner)) continue;
 
-                // Ghi nhận hit
                 m_AlreadyHitOwners.Add(hurtbox.Owner);
-
                 results.Add(new HitResult
                 {
                     hurtbox = hurtbox,
-                    hitPoint = col.ClosestPoint(scanCenter),
-                    hitNormal = (hurtbox.transform.position - scanCenter).normalized,
-                    damage = m_CurrentAttack.damage * hurtbox.DamageMultiplier,
-                    knockbackForce = m_CurrentAttack.knockbackForce,
+                    hitPoint = col.ClosestPoint(worldCenter),
+                    hitNormal = (hurtbox.transform.position - worldCenter).normalized,
+                    damage = (m_CurrentAttack != null ? m_CurrentAttack.damage : 10) * hurtbox.DamageMultiplier,
+                    knockbackForce = m_CurrentAttack != null ? m_CurrentAttack.knockbackForce : 5,
                     attackData = m_CurrentAttack
                 });
             }
@@ -116,22 +88,20 @@ namespace Blocks.Gameplay.Core.Combat
 #if UNITY_EDITOR
         private void OnDrawGizmos()
         {
-            float radius = m_CurrentAttack != null ? m_CurrentAttack.hitboxRadius : defaultRadius;
-            Vector3 offset = m_CurrentAttack != null ? m_CurrentAttack.hitboxOffset : Vector3.zero;
-            Vector3 center = transform.position + transform.TransformDirection(offset);
+            if (weaponCollider == null) weaponCollider = GetComponent<BoxCollider>();
+            if (weaponCollider == null) return;
 
-            if (IsActive)
-            {
-                // Đỏ rực khi Active
-                Gizmos.color = new Color(1f, 0f, 0f, 0.6f);
-                Gizmos.DrawSphere(center, radius);
-            }
-            else
-            {
-                // Vàng nhạt khi Inactive
-                Gizmos.color = new Color(1f, 1f, 0f, 0.15f);
-                Gizmos.DrawWireSphere(center, radius);
-            }
+            // Vẽ khối hộp trùng khít với Box Collider để bạn dễ căn chỉnh
+            Matrix4x4 oldMatrix = Gizmos.matrix;
+            Gizmos.matrix = weaponCollider.transform.localToWorldMatrix;
+            
+            Gizmos.color = IsActive ? new Color(1, 0, 0, 0.5f) : new Color(1, 1, 0, 0.2f);
+            Gizmos.DrawCube(weaponCollider.center, weaponCollider.size);
+            
+            Gizmos.color = IsActive ? Color.red : Color.yellow;
+            Gizmos.DrawWireCube(weaponCollider.center, weaponCollider.size);
+            
+            Gizmos.matrix = oldMatrix;
         }
 #endif
     }
