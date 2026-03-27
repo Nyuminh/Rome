@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Jab
   m_EditorClassIdentifier: Blocks.Gameplay.Core::Blocks.Gameplay.Core.Combat.AttackData
   startupFrames: 4
-  activeFrames: 3
+  activeFrames: 40
   recoveryFrames: 10
   damage: 15
   knockbackForce: 5
-  hitboxRadius: 2
+  hitboxRadius: 0.35
   hitboxOffset: {x: 0, y: 0, z: 0}
   hitStopDuration: 0.06
   hitStopTimeScale: 0

@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.AI;
+using Unity.Netcode;
 using Blocks.Gameplay.Core;
+using System.Collections.Generic;
 
-public class LionBehavior : MonoBehaviour
+public class LionBehavior : NetworkBehaviour
 {
-    private Transform player;
+    private Transform targetPlayer;
     public float alertRange = 10f;
     public float attackRange = 2f;
 
@@ -15,32 +17,40 @@ public class LionBehavior : MonoBehaviour
 
     private NavMeshAgent agent;
     private Animator anim;
-    private LionHitReceiver hitReceiver; // Thêm biến để tham chiếu trạng thái sống/chết
+    private LionHitReceiver hitReceiver;
 
     void Start()
     {
         agent = GetComponent<NavMeshAgent>();
         anim = GetComponent<Animator>();
-        hitReceiver = GetComponent<LionHitReceiver>(); // Lấy component nhận sát thương
+        hitReceiver = GetComponent<LionHitReceiver>();
     }
 
     void Update()
     {
-        // BƯỚC QUAN TRỌNG: Nếu sư tử đã chết, dừng mọi logic và thoát hàm
+        // CHỈ SERVER mới điều khiển AI
+        if (!IsServer) return;
+
+        // Nếu sư tử đã chết, dừng mọi logic
         if (hitReceiver != null && hitReceiver.isDead)
         {
-            if (agent.enabled) agent.isStopped = true; // Dừng di chuyển hẳn
+            if (agent.enabled) agent.isStopped = true;
             return;
         }
 
-        if (player == null)
+        // Tìm người chơi gần nhất mỗi 0.5 giây (tối ưu hiệu năng)
+        if (Time.frameCount % 30 == 0 || targetPlayer == null)
         {
-            GameObject playerObj = GameObject.FindWithTag("Player");
-            if (playerObj != null) player = playerObj.transform;
+            FindNearestPlayer();
+        }
+
+        if (targetPlayer == null)
+        {
+            IdleState();
             return;
         }
 
-        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        float distanceToPlayer = Vector3.Distance(transform.position, targetPlayer.position);
 
         if (distanceToPlayer <= attackRange)
         {
@@ -56,9 +66,29 @@ public class LionBehavior : MonoBehaviour
         }
     }
 
+    void FindNearestPlayer()
+    {
+        float minDistance = float.MaxValue;
+        Transform closest = null;
+
+        // Quét tất cả object có tag Player (hoặc dùng NetworkManager.Singleton.ConnectedClients)
+        GameObject[] players = GameObject.FindGameObjectsWithTag("Player");
+        
+        foreach (GameObject p in players)
+        {
+            float dist = Vector3.Distance(transform.position, p.transform.position);
+            if (dist < minDistance)
+            {
+                minDistance = dist;
+                closest = p.transform;
+            }
+        }
+
+        targetPlayer = closest;
+    }
+
     void AttackState()
     {
-        // Kiểm tra lại lần nữa để chắc chắn không vồ khi đang diễn anim chết
         if (hitReceiver != null && hitReceiver.isDead) return;
 
         agent.isStopped = true;
@@ -75,16 +105,18 @@ public class LionBehavior : MonoBehaviour
 
     void DealDamage()
     {
-        var hittable = player.GetComponent<IHittable>();
+        if (targetPlayer == null) return;
+
+        var hittable = targetPlayer.GetComponent<IHittable>();
         if (hittable != null)
         {
-            Debug.Log("<color=red>Sư tử đã vồ trúng Player!</color>");
+            // Debug.Log("<color=red>Sư tử đã vồ trúng Player!</color>");
             HitInfo info = new HitInfo
             {
                 amount = damageAmount,
-                hitPoint = player.position,
+                hitPoint = targetPlayer.position,
                 hitNormal = Vector3.up,
-                attackerId = 999,
+                attackerId = 999, // ID cho AI
                 impactForce = transform.forward * 5f
             };
             hittable.OnHit(info);
@@ -93,8 +125,9 @@ public class LionBehavior : MonoBehaviour
 
     void FollowState()
     {
+        if (targetPlayer == null) return;
         agent.isStopped = false;
-        agent.SetDestination(player.position);
+        agent.SetDestination(targetPlayer.position);
         anim.SetBool("isWalking", true);
         anim.SetBool("isAttacking", false);
     }
@@ -108,9 +141,13 @@ public class LionBehavior : MonoBehaviour
 
     void LookAtPlayer()
     {
-        Vector3 direction = (player.position - transform.position).normalized;
-        Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
-        transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+        if (targetPlayer == null) return;
+        Vector3 direction = (targetPlayer.position - transform.position).normalized;
+        if (direction != Vector3.zero)
+        {
+            Quaternion lookRotation = Quaternion.LookRotation(new Vector3(direction.x, 0, direction.z));
+            transform.rotation = Quaternion.Slerp(transform.rotation, lookRotation, Time.deltaTime * 5f);
+        }
     }
 
     void OnDrawGizmosSelected()
@@ -120,4 +157,4 @@ public class LionBehavior : MonoBehaviour
         Gizmos.color = Color.yellow;
         Gizmos.DrawWireSphere(transform.position, attackRange);
     }
-}
+}
