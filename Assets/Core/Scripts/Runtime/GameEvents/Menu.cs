@@ -1,37 +1,29 @@
 ﻿using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.Audio;
 using UnityEngine.UI;
+using Blocks.Gameplay.Core; // Để dùng PauseMenuController
 
-public class Menu : MonoBehaviour
+public class MainMenu : MonoBehaviour
 {
-    [Header("Settings")]
-    public string campaignSceneName = "CampaignScene";
-    public string multiplayerSceneName = "MultiplayerScene";
+  
+    public Button continueButton; // Kéo nút "Tiếp Tục" vào đây trong Inspector
+    // --- CÁC HÀM CŨ CỦA BẠN ---
 
-    public void PlayGame()
+    void Start()
     {
-        Debug.Log("Bắt đầu Game...");
-        // Chuyển đến màn hình chọn nhân vật hoặc vào game trực tiếp
+       
+    }
+    public void BatDauGame()
+    {
+        SceneManager.LoadScene("[BB] Core");
+        Debug.Log("Đang tải trò chơi...");
     }
 
-    public void OpenOptions()
+    public void ThoatGame()
     {
-        Debug.Log("Mở cài đặt");
-    }
-
-    public void OpenCredits()
-    {
-        Debug.Log("Mở thông tin tác giả");
-    }
-
-    public void SelectCharacter()
-    {
-        Debug.Log("Mở menu chọn nhân vật");
-    }
-
-    public void QuitGame()
-    {
-        Debug.Log("Thoát game");
         Application.Quit();
+        Debug.Log("Đã thoát game!");
     }
+   
 }
