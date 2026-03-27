@@ -1,4 +1,5 @@
 using UnityEngine;
+using Unity.Netcode;
 using System.Collections.Generic;
 
 namespace Blocks.Gameplay.Core.Combat
@@ -29,7 +30,7 @@ namespace Blocks.Gameplay.Core.Combat
     /// 
     /// Gắn lên Player prefab, cùng cấp với CorePlayerManager.
     /// </summary>
-    public class CombatManager : MonoBehaviour
+    public class CombatManager : NetworkBehaviour
     {
         #region Fields & Properties
 
@@ -87,8 +88,7 @@ namespace Blocks.Gameplay.Core.Combat
         private float m_LastAttackTime = -999f;
         private bool m_InputBuffered = false;
 
-        // === Network ===
-        private Unity.Netcode.NetworkObject m_NetworkObject;
+
 
         #endregion
 
@@ -101,6 +101,10 @@ namespace Blocks.Gameplay.Core.Combat
 
         private void Update()
         {
+            // CHỈ owner mới xử lý input và combat logic
+            // Nếu chưa spawn (offline/singleplayer) → vẫn cho chạy
+            if (IsSpawned && !IsOwner) return;
+
             if (!IsAttacking)
             {
                 // Xử lý input bấm chuột trái → tấn công
@@ -298,9 +302,9 @@ namespace Blocks.Gameplay.Core.Combat
             if (hittable != null)
             {
                 ulong attackerId = 0;
-                if (m_NetworkObject != null && m_NetworkObject.IsSpawned)
+                if (IsSpawned)
                 {
-                    attackerId = m_NetworkObject.OwnerClientId;
+                    attackerId = OwnerClientId;
                 }
 
                 HitInfo hitInfo = new HitInfo
@@ -319,7 +323,7 @@ namespace Blocks.Gameplay.Core.Combat
             if (HitStopManager.Instance != null && hit.attackData != null)
             {
                 // Cho multiplayer: dùng Animator-based hit stop thay vì Time.timeScale
-                if (m_NetworkObject != null && m_NetworkObject.IsSpawned)
+                if (IsSpawned)
                 {
                     Animator victimAnimator = hit.hurtbox.Owner.GetComponentInChildren<Animator>();
                     HitStopManager.Instance.TriggerAnimatorHitStop(
@@ -384,12 +388,6 @@ namespace Blocks.Gameplay.Core.Combat
             {
                 animator = GetComponent<Animator>();
                 if (animator == null) animator = GetComponentInChildren<Animator>();
-            }
-
-            m_NetworkObject = GetComponent<Unity.Netcode.NetworkObject>();
-            if (m_NetworkObject == null)
-            {
-                m_NetworkObject = GetComponentInParent<Unity.Netcode.NetworkObject>();
             }
         }
 

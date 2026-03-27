@@ -1,8 +1,13 @@
-﻿using UnityEngine;
+using UnityEngine;
 using UnityEngine.InputSystem;
+using Unity.Netcode;
 using Blocks.Gameplay.Core;
 
-public class PlayerCombat : MonoBehaviour
+/// <summary>
+/// [LEGACY] Script combat cũ. Đã sửa thêm IsOwner check cho multiplayer.
+/// Khuyến khích chuyển sang CombatManager mới cho hệ thống Frame Data chuyên nghiệp.
+/// </summary>
+public class PlayerCombat : NetworkBehaviour
 {
     public float attackRange = 2.5f;
     public float damageAmount = 20f;
@@ -23,6 +28,9 @@ public class PlayerCombat : MonoBehaviour
 
     void Update()
     {
+        // ★ FIX: Chỉ chạy trên Owner — ngăn instance đối phương xử lý input
+        if (IsSpawned && !IsOwner) return;
+
         // Kiểm tra Reset combo nếu để quá lâu không đánh
         if (Time.time - lastClickTime > comboDelay)
         {
@@ -60,18 +68,35 @@ public class PlayerCombat : MonoBehaviour
 
         foreach (Collider enemy in hitEnemies)
         {
+            // ★ FIX: Bỏ qua chính mình — OverlapSphere đang quét trúng collider của bản thân
+            if (enemy.transform.root == transform.root) continue;
+            if (enemy.transform.IsChildOf(transform)) continue;
+
             var networkObj = enemy.GetComponent<Unity.Netcode.NetworkObject>();
-            // Chỉ đánh nếu sư tử đã spawned và chưa chết
+            if (networkObj == null) networkObj = enemy.GetComponentInParent<Unity.Netcode.NetworkObject>();
+
+            // Chỉ đánh nếu đã spawned và không phải chính mình
             if (networkObj != null && networkObj.IsSpawned)
             {
-                var hittable = enemy.GetComponent<IHittable>();
-                var lion = enemy.GetComponent<LionHitReceiver>();
+                // ★ FIX: Double-check không phải chính mình qua NetworkObject
+                if (networkObj == NetworkObject) continue;
+
+                var hittable = networkObj.GetComponent<IHittable>();
+                var lion = networkObj.GetComponent<LionHitReceiver>();
 
                 if (hittable != null && (lion == null || !lion.isDead))
                 {
-                    HitInfo info = new HitInfo { amount = currentDamage, attackerId = 0 };
+                    ulong myId = IsSpawned ? OwnerClientId : 0;
+                    HitInfo info = new HitInfo
+                    {
+                        amount = currentDamage,
+                        attackerId = myId,
+                        hitPoint = enemy.ClosestPoint(scanPosition),
+                        hitNormal = (enemy.transform.position - transform.position).normalized,
+                        impactForce = transform.forward * 5f
+                    };
                     hittable.OnHit(info);
-                    Debug.Log($"Combo {comboCount} trúng đích! Sát thương: {currentDamage}");
+                    Debug.Log($"Combo {comboCount} trúng {networkObj.name}! Sát thương: {currentDamage}");
                 }
             }
         }
@@ -82,4 +107,4 @@ public class PlayerCombat : MonoBehaviour
         Gizmos.color = Color.red;
         Gizmos.DrawWireSphere(transform.position + transform.forward + Vector3.up, attackRange);
     }
-}
+}

@@ -22,43 +22,43 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 67dca66dcdf72574e89f49787f79655f, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0.00010448955
+      value: 0.08
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 67dca66dcdf72574e89f49787f79655f, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.0004789388
+      value: 0.024
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 67dca66dcdf72574e89f49787f79655f, type: 3}
       propertyPath: m_LocalPosition.z
-      value: -0.00040384397
+      value: -0.143
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 67dca66dcdf72574e89f49787f79655f, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.0044825412
+      value: -0.174864
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 67dca66dcdf72574e89f49787f79655f, type: 3}
       propertyPath: m_LocalRotation.x
-      value: -0.122877955
+      value: 0.029860757
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 67dca66dcdf72574e89f49787f79655f, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.9800042
+      value: -0.8251968
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 67dca66dcdf72574e89f49787f79655f, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.15643755
+      value: -0.5362659
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 67dca66dcdf72574e89f49787f79655f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
-      value: -62.157
+      value: -116.428
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 67dca66dcdf72574e89f49787f79655f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.y
-      value: -68.391
+      value: -35.201996
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 67dca66dcdf72574e89f49787f79655f, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
-      value: -89.786
+      value: -161.901
       objectReference: {fileID: 0}
     - target: {fileID: -7511558181221131132, guid: 67dca66dcdf72574e89f49787f79655f, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
@@ -67,6 +67,10 @@ PrefabInstance:
     - target: {fileID: 919132149155446097, guid: 67dca66dcdf72574e89f49787f79655f, type: 3}
       propertyPath: m_Name
       value: Human_Polearm
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 67dca66dcdf72574e89f49787f79655f, type: 3}
+      propertyPath: m_Layer
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 67dca66dcdf72574e89f49787f79655f, type: 3}
       propertyPath: m_TagString
@@ -79,6 +83,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 67dca66dcdf72574e89f49787f79655f, type: 3}
       insertIndex: -1
       addedObject: {fileID: -2849198328016131226}
+    - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 67dca66dcdf72574e89f49787f79655f, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 410364457949977887}
   m_SourcePrefab: {fileID: 100100000, guid: 67dca66dcdf72574e89f49787f79655f, type: 3}
 --- !u!1 &2561436442090411570 stripped
 GameObject:
@@ -107,3 +114,20 @@ MeshCollider:
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -5493429242102842411, guid: 67dca66dcdf72574e89f49787f79655f, type: 3}
+--- !u!114 &410364457949977887
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2561436442090411570}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bc87826aadf42334691a428c98a21244, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Blocks.Gameplay.Core::Blocks.Gameplay.Core.Combat.Hitbox
+  hurtboxLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  defaultRadius: 0.35
+  owner: {fileID: 0}
