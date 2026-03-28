@@ -493,13 +493,13 @@ MonoBehaviour:
   Interpolate: 1
   SlerpPosition: 0
   directionMode: 2
-  moveSpeed: 3
+  moveSpeed: 20
   sprintSpeed: 6
   rotationSmoothTime: 0.1
   speedChangeRate: 15
   forceDecayRate: 5
   gravity: -15
-  jumpHeight: 2.7
+  jumpHeight: 10
   groundedOffset: -0.14
   groundedRadius: 0.28
   groundLayers:
@@ -765,8 +765,8 @@ MonoBehaviour:
   coreStats: {fileID: 1108927199896854533}
   corePlayerState: {fileID: 1563147582858549678}
   shooterAnimator: {fileID: 4776799937623358137}
-  headshotMultiplier: 2
-  armorDamageReduction: 0.3
+  headshotMultiplier: 1000000
+  armorDamageReduction: 0
   hasArmor: 0
   showDamageNumbers: 1
   soundDefPlayerHit: {fileID: 11400000, guid: defef7f2f2fde3b4e9cc4d9a8b44f480, type: 2}

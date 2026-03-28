@@ -50,7 +50,7 @@ namespace Blocks.Gameplay.Core
         /// </summary>
         /// <param name="info">The hit data sent from the client.</param>
         /// <param name="rpcParams">RPC parameters (unused in this case).</param>
-        [Rpc(SendTo.Authority)]
+        [Rpc(SendTo.Authority, RequireOwnership = false)]
         public void SubmitHitRpc(HitInfo info, RpcParams rpcParams = default)
         {
             // This method executes only on the server/host, ensuring that the game logic for the hit
