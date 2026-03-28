@@ -35,6 +35,9 @@ namespace Blocks.Gameplay.Core
         protected override void HandleHit(HitInfo info)
         {
             if (statsHandler == null) return;
+            
+            // Spawn hiệu ứng máu tóe ra vị trí bị bắn trúng
+            BloodSplatterEffect.Spawn(info.hitPoint, info.hitNormal);
 
             // Nếu Authority cũng là Owner (Host bị đánh) → xử lý trực tiếp
             if (IsOwner)

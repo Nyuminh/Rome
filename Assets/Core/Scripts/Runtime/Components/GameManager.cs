@@ -23,6 +23,8 @@ namespace Blocks.Gameplay.Core
         /// </summary>
         public static GameManager Instance { get; private set; }
 
+        public static bool IsGameOver { get; set; } = false;
+
         [Tooltip("If true, uses Unity Multiplayer Services for session management. If false, uses NetworkManager callbacks.")]
         [SerializeField] private bool isUsingMultiplayerServices = false;
 
@@ -41,7 +43,7 @@ namespace Blocks.Gameplay.Core
         [SerializeField] private float respawnDelay = 5.0f;
 
         [Tooltip("If true, the local player respawns automatically.")]
-        [SerializeField] private bool autoRespawn = true;
+        [SerializeField] private bool autoRespawn = false;
 
         [Header("Spawning")]
         [Tooltip("List of Transforms to use as spawn points.")]
@@ -381,8 +383,8 @@ namespace Blocks.Gameplay.Core
                         playerState.SetLifeState(PlayerLifeState.Eliminated);
                     }
 
-                    // Start respawn countdown if auto-respawn is enabled
-                    if (autoRespawn)
+                    // Start respawn countdown if auto-respawn is enabled AND game is not over
+                    if (autoRespawn && !IsGameOver)
                     {
                         StartCoroutine(RespawnRoutine(playerState));
                     }

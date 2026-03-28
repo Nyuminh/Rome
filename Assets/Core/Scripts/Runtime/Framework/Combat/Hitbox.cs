@@ -83,28 +83,56 @@ namespace Blocks.Gameplay.Core.Combat
             Vector3 scanCenter = transform.position + transform.TransformDirection(m_CurrentAttack.hitboxOffset);
 
             // === Code-Driven Collision: OverlapSphere ===
-            Collider[] hits = Physics.OverlapSphere(scanCenter, m_CurrentRadius, hurtboxLayer);
+            // Dùng ~0 (Tất cả các layer) thay vì hurtboxLayer để đảm bảo quét trúng 
+            // các quái vật cũ (điển hình như Lion) có thể đang nằm ở layer khác.
+            Collider[] hits = Physics.OverlapSphere(scanCenter, m_CurrentRadius, ~0);
 
-            foreach (var col in hits)
+            // Tính năng bù đắp (Forgiveness Area): Do bàn tay có bán kính quét cực nhỏ (0.3), 
+            // nó thường không chạm tới được vùng trung tâm cục Collider khổng lồ của Sư Tử.
+            // Chúng ta thiết lập quét rộng thêm (2.0f) ở phía trước Player để bắt legacy targets.
+            Vector3 wideScanCenter = owner.transform.position + owner.transform.forward * 1.5f + Vector3.up;
+            Collider[] wideHits = Physics.OverlapSphere(wideScanCenter, 2.0f, ~0);
+
+            var allColliders = new HashSet<Collider>(hits);
+            allColliders.UnionWith(wideHits);
+
+            foreach (var col in allColliders)
             {
                 var hurtbox = col.GetComponent<Hurtbox>();
-                if (hurtbox == null || !hurtbox.IsActive) continue;
+                GameObject targetOwner;
+                float damageMultiplier = 1.0f;
+
+                if (hurtbox != null)
+                {
+                    if (!hurtbox.IsActive) continue;
+                    targetOwner = hurtbox.Owner;
+                    damageMultiplier = hurtbox.DamageMultiplier;
+                }
+                else
+                {
+                    // Fallback cho đối tượng cũ (VD: Sư Tử chỉ có LionHitReceiver/IHittable mà không có Hurtbox)
+                    var hittable = col.GetComponentInParent<IHittable>();
+                    if (hittable == null) continue;
+                    
+                    targetOwner = ((MonoBehaviour)hittable).gameObject;
+                }
 
                 // Không tự đánh mình
-                if (hurtbox.Owner == owner) continue;
+                if (targetOwner == owner) continue;
 
                 // Đã trúng owner này trong đòn đánh hiện tại → bỏ qua (anti multi-hit)
-                if (m_AlreadyHitOwners.Contains(hurtbox.Owner)) continue;
+                if (m_AlreadyHitOwners.Contains(targetOwner)) continue;
 
                 // Ghi nhận hit
-                m_AlreadyHitOwners.Add(hurtbox.Owner);
+                m_AlreadyHitOwners.Add(targetOwner);
 
                 results.Add(new HitResult
                 {
                     hurtbox = hurtbox,
+                    targetOwner = targetOwner,
                     hitPoint = col.ClosestPoint(scanCenter),
-                    hitNormal = (hurtbox.transform.position - scanCenter).normalized,
-                    damage = m_CurrentAttack.damage * hurtbox.DamageMultiplier,
+                    hitNormal = (targetOwner.transform.position - scanCenter).normalized,
+                    damage = m_CurrentAttack.damage * damageMultiplier,
                     knockbackForce = m_CurrentAttack.knockbackForce,
                     attackData = m_CurrentAttack
                 });
@@ -142,6 +170,7 @@ namespace Blocks.Gameplay.Core.Combat
     public struct HitResult
     {
         public Hurtbox hurtbox;
+        public GameObject targetOwner;
         public Vector3 hitPoint;
         public Vector3 hitNormal;
         public float damage;

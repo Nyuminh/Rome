@@ -8,9 +8,11 @@
 #health-info-container {
     position: absolute;
     bottom: 20px;
-    background-color: rgba(0, 0, 0, 0.0);
+    background-color: rgba(10, 10, 10, 0.85);
     padding: 15px;
-    border-radius: 5px;
+    border-radius: 4px;
+    border-width: 2px;
+    border-color: rgb(218, 165, 32); /* Golden border for Rome theme */
     width: 320px;
 }
 
@@ -23,8 +25,204 @@
 }
 
 #health-info-container {
+    right: 20px;
+    left: auto;
+    bottom: 130px; /* Above the weapon info container */
+}
+
+#enemy-health-container {
+    position: absolute;
     left: 20px;
-    right: auto;
+    top: 50%;
+    translate: 0 -50%;
+    width: 300px;
+    background-color: rgba(0, 0, 0, 0.4);
+    padding: 15px;
+    border-radius: 8px;
+    display: flex;
+}
+
+#enemy-health-label {
+    font-size: 20px;
+    color: white;
+    -unity-font-style: bold;
+    text-shadow: 1px 1px 2px rgb(0, 0, 0);
+    margin-bottom: 5px;
+}
+
+#enemy-health-bar {
+    width: 100%;
+    height: 30px;
+    min-height: 30px;
+    -unity-background-image-tint-color: rgb(255, 0, 0);
+    flex-shrink: 0;
+    justify-content: center;
+}
+
+#blood-splatter-overlay {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition-property: opacity;
+    transition-duration: 0.5s;
+    pointer-events: none;
+    -unity-background-scale-mode: scale-to-fit;
+}
+
+#win-lose-menu {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    display: none;
+    align-items: center;
+    justify-content: center;
+}
+
+#win-lose-backdrop {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+#win-lose-panel {
+    /* Deep dark background with subtle warm tint */
+    background-color: rgba(12, 8, 4, 0.98);
+    border-width: 3px;
+    border-color: rgb(218, 165, 32);
+    border-radius: 2px;
+    padding: 0px;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    width: 560px;
+    min-height: 400px;
+    /* Outer glow effect using box-shadow not supported; use inner padding trick */
+}
+
+#panel-top-ornament {
+    width: 100%;
+    height: 8px;
+    background-color: rgb(218, 165, 32);
+    margin-bottom: 30px;
+}
+
+#panel-bottom-ornament {
+    width: 100%;
+    height: 8px;
+    background-color: rgb(218, 165, 32);
+    margin-top: 30px;
+}
+
+#result-icon {
+    font-size: 52px;
+    color: rgb(218, 165, 32);
+    margin-bottom: 8px;
+    -unity-text-align: middle-center;
+}
+
+#result-title {
+    font-size: 80px;
+    color: rgb(255, 215, 0);
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    margin-bottom: 0px;
+    /* Letterpress shadow effect */
+    text-shadow: 0px 4px 0px rgb(80, 40, 0), 0px 8px 16px rgba(0,0,0,0.8);
+}
+
+#panel-divider {
+    width: 80%;
+    height: 2px;
+    background-color: rgba(218, 165, 32, 0.5);
+    margin-top: 16px;
+    margin-bottom: 16px;
+}
+
+#result-subtitle {
+    font-size: 22px;
+    color: rgb(200, 180, 140);
+    -unity-text-align: middle-center;
+    margin-bottom: 28px;
+    letter-spacing: 2px;
+}
+
+#panel-buttons {
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.rome-button {
+    width: 75%;
+    height: 52px;
+    font-size: 18px;
+    -unity-font-style: bold;
+    color: rgb(255, 230, 150);
+    background-color: rgba(120, 30, 10, 0.9);
+    border-width: 2px;
+    border-color: rgb(218, 165, 32);
+    border-radius: 2px;
+    margin-bottom: 14px;
+    letter-spacing: 3px;
+    transition-duration: 0.15s;
+}
+
+.rome-button:hover {
+    background-color: rgba(180, 50, 15, 1.0);
+    border-color: rgb(255, 220, 80);
+    color: white;
+    scale: 1.04;
+}
+
+.rome-button-secondary {
+    background-color: rgba(30, 30, 30, 0.9);
+    color: rgb(180, 160, 120);
+    border-color: rgba(150, 120, 60, 0.7);
+}
+
+.rome-button-secondary:hover {
+    background-color: rgba(60, 55, 45, 0.95);
+    border-color: rgb(218, 165, 32);
+    color: rgb(220, 200, 150);
+    scale: 1.03;
+}
+
+.rome-progress-bar {
+    width: 100%;
+    height: 25px;
+    margin-bottom: 10px;
+}
+
+.rome-progress-bar .unity-progress-bar__container {
+    height: 100%;
+    min-height: 25px;
+}
+
+.rome-progress-bar .unity-progress-bar__background {
+    background-color: rgba(30, 30, 30, 0.8);
+    border-width: 2px;
+    border-color: rgb(150, 150, 150);
+    border-radius: 4px;
+}
+
+#player-health-bar .unity-progress-bar__progress {
+    background-color: rgb(200, 30, 30); /* Dark Red for health */
+    border-radius: 2px;
+}
+
+#player-stamina-bar .unity-progress-bar__progress {
+    background-color: rgb(34, 139, 34); /* Forest Green for stamina */
+    border-radius: 2px;
+}
+
+.stat-label {
+    font-size: 14px;
+    -unity-font-style: bold;
+    color: rgb(218, 165, 32); /* Gold */
+    margin-bottom: 2px;
+    margin-left: 2px;
 }
 
 #player-health-bar {

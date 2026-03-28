@@ -298,7 +298,7 @@ namespace Blocks.Gameplay.Core.Combat
         private void ProcessHit(HitResult hit)
         {
             // 1. Gây sát thương qua hệ thống IHittable có sẵn
-            var hittable = hit.hurtbox.Owner.GetComponent<IHittable>();
+            var hittable = hit.targetOwner.GetComponentInChildren<IHittable>();
             if (hittable != null)
             {
                 ulong attackerId = 0;
@@ -325,7 +325,7 @@ namespace Blocks.Gameplay.Core.Combat
                 // Cho multiplayer: dùng Animator-based hit stop thay vì Time.timeScale
                 if (IsSpawned)
                 {
-                    Animator victimAnimator = hit.hurtbox.Owner.GetComponentInChildren<Animator>();
+                    Animator victimAnimator = hit.targetOwner.GetComponentInChildren<Animator>();
                     HitStopManager.Instance.TriggerAnimatorHitStop(
                         animator, victimAnimator, hit.attackData.hitStopDuration);
                 }
@@ -349,8 +349,11 @@ namespace Blocks.Gameplay.Core.Combat
                     .Play();
             }
 
-            Debug.Log($"[Combat] HIT! {hit.hurtbox.Owner.name} tại vùng {hit.hurtbox.Zone} " +
-                      $"| Damage: {hit.damage:F1} (x{hit.hurtbox.DamageMultiplier}) " +
+            string targetName = hit.targetOwner != null ? hit.targetOwner.name : "UnknownTarget";
+            string zoneName = hit.hurtbox != null ? hit.hurtbox.Zone.ToString() : "DirectBody";
+
+            Debug.Log($"[Combat] HIT! {targetName} tại vùng {zoneName} " +
+                      $"| Damage: {hit.damage:F1} " +
                       $"| Knockback: {hit.knockbackForce:F1}");
         }
 

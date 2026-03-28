@@ -119,7 +119,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  GlobalObjectIdHash: 377361936
+  GlobalObjectIdHash: 3332776117
   InScenePlacedSourceGlobalObjectIdHash: 3365733114
   DeferredDespawnTick: 0
   Ownership: 1
@@ -487,7 +487,7 @@ MonoBehaviour:
   animator: {fileID: 4549862763554353656}
   targetStatsHandler: {fileID: 4693597182505471118}
   hitEffectPrefab: {fileID: 0}
-  hitSoundDef: {fileID: 0}
+  hitSoundDef: {fileID: 11400000, guid: 053c472a2e6f5294db2d09edf054fddc, type: 2}
 --- !u!1001 &176732211710024601
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -621,8 +621,8 @@ MonoBehaviour:
   hurtboxLayer:
     serializedVersion: 2
     m_Bits: 512
+  defaultRadius: 0.3
   owner: {fileID: 8195293402151718667}
-  weaponCollider: {fileID: 2297733146820580534}
 --- !u!1 &5172902328214812698 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 5024387983735825283, guid: 89d8abcb4f22f2e4f9e1bbaf1942761a, type: 3}
